@@ -1,10 +1,12 @@
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class Main {
     public static void main(String[] args) {
-        connect();
+        connectAndDisplayMitarbeitende();
         System.out.println("Hello, World!");
     }
 
@@ -79,11 +81,24 @@ SELECT * FROM Urlaube;
 
      */
 
-    public static void connect() {
+    public static void connectAndDisplayMitarbeitende() {
         // connection string
         var url = "jdbc:sqlite:C:/LVs/DBP2025/UrlaubsverwaltungJDBC2025.db";
         try (var conn = DriverManager.getConnection(url)) {
+
             System.out.println("Connection to SQLite has been established.");
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery( "select MAId, Vorname, Nachname, Email, Eintrittsdatum from Mitarbeitende" );
+            while ( rs.next() )
+                System.out.printf( "%d, Vorname: %s, Nachname: %s Email: %s Eintritt: %s %n",
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5)
+                );
+
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
