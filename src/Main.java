@@ -11,7 +11,6 @@ public class Main {
     public static void connect() {
         // connection string
         var url = "jdbc:sqlite:C:/LVs/DBP2025/chinook.db";
-
         try (var conn = DriverManager.getConnection(url)) {
             System.out.println("Connection to SQLite has been established.");
         } catch (SQLException e) {
