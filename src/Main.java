@@ -3,12 +3,20 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
         //connectAndDisplayMitarbeitende();
-        connectAndDisplayMitarbeiterUrlaub(1);
+        //connectAndDisplayMitarbeiterUrlaub(1);
         System.out.println("Hello, World!");
+
+        System.out.println(System.lineSeparator() + "3️⃣ Alle Mitarbeitenden als Objekte aus einer ArrayList ausgeben: ");
+        ArrayList<Mitarbeitende> alleMitarbeitende = getMitarbeitende();
+        for (Mitarbeitende mitarbeiter : alleMitarbeitende) {
+            System.out.println(mitarbeiter);
+        }
+
     }
 
     /* Database
@@ -136,4 +144,36 @@ SELECT * FROM Urlaube;
         }
     }
 
+    //   O/R-Mapping von Relation zu Objekt
+    public static ArrayList<Mitarbeitende> getMitarbeitende() {
+        var url = "jdbc:sqlite:C:/LVs/DBP2025/UrlaubsverwaltungJDBC2025.db";
+        ArrayList<Mitarbeitende> mitarbeitendeList = new ArrayList<>();
+
+        try ( var conn = DriverManager.getConnection(url)) {
+            System.out.println("🛜 Connection to SQLite has been established.");
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende");
+
+            while (rs.next()) {
+                int id = rs.getInt("MAId");
+                String vorname = rs.getString("Vorname");
+                String nachname = rs.getString("Nachname");
+                String email = rs.getString("Email");
+                String eintrittsdatum = rs.getString("Eintrittsdatum");
+
+                Mitarbeitende mitarbeiter = new Mitarbeitende(id, vorname, nachname, email, eintrittsdatum);
+                mitarbeitendeList.add(mitarbeiter);
+            }
+        } catch (SQLException e) {
+            System.out.println("Fehler bei der Datenbankoperation: " + e.getMessage());
+
+        }
+        return mitarbeitendeList;
+    }
+
+   // public static ArrayList<Mitarbeitende> getMitarbeitdeen(
+    //anstelle von System.out soll im while ObjectArray befüllen
+    //main
+    //ArrayList<Mitarbeitende> =  getMitarbeitdeen();
 }
