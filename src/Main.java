@@ -31,7 +31,6 @@ CREATE TABLE Urlaubsarten (
     Bezeichnung  TEXT    NOT NULL
 );
 
-
 CREATE TABLE Urlaube (
     UrlaubId      INTEGER PRIMARY KEY,
     MitarbeiterId INTEGER NOT NULL,
