@@ -11,12 +11,48 @@ public class Main {
         //connectAndDisplayMitarbeiterUrlaub(1);
         System.out.println("Hello, World!");
 
+        DBHelper myHelper =new DBHelper();
+        myHelper.connectToDatabase();
+        //get einen Mitarbeitenden
+        Mitarbeitende mNr1 = myHelper.getMitarbeitenden(4);
+        System.out.println(mNr1);
+        mNr1.vorname="Karl";
+        System.out.println(myHelper.updateMitarbeitenden(mNr1));
+
+        //Aufgabe für Nachmittag
+        //myHelpder.deleteMitarbeitender(1)
+        //myHelper.insertNewMitarbeitender(maNeu);
+        //Der neue Mitarbeitende bekam die Id 37 ???
+
+
+
+        /*
+        ArrayList<Mitarbeitende> alleMitarbeitende = myHelper.getMitarbeitende();
+        for (Mitarbeitende m : alleMitarbeitende) {
+            System.out.println(m);
+        }
+
+        myHelper.getUrlaubProMitarbeiter();
+*/
+
+        /* eigene Helper-Klasse
+        DbHelper myHelper =new DbHelper();
+        myHelper.connectToDatbase();
+        ArrayList<Mitarbeitende> alleMitarbeitende = myHelper.getMitarbeitende();
+        getUrlaubProMitarbeiter ---- Johann 7 Tage, Donna 3 Tage
+        myHelper.closeDatabaseConnectioin();
+        */
+
+        //1     5 + 7 + 3
+
+
+/*
         System.out.println(System.lineSeparator() + "3️⃣ Alle Mitarbeitenden als Objekte aus einer ArrayList ausgeben: ");
         ArrayList<Mitarbeitende> alleMitarbeitende = getMitarbeitende();
         for (Mitarbeitende mitarbeiter : alleMitarbeitende) {
             System.out.println(mitarbeiter);
         }
-
+*/
     }
 
     /* Database
@@ -92,6 +128,9 @@ SELECT * FROM Urlaube;
 
     public static void connectAndDisplayMitarbeitende() {
         // connection string
+
+
+
         var url = "jdbc:sqlite:C:/LVs/DBP2025/UrlaubsverwaltungJDBC2025.db";
         try (var conn = DriverManager.getConnection(url)) {
             System.out.println("Connection to SQLite has been established.");
@@ -145,7 +184,7 @@ SELECT * FROM Urlaube;
     }
 
     //   O/R-Mapping von Relation zu Objekt
-    public static ArrayList<Mitarbeitende> getMitarbeitende() {
+    public static ArrayList<Mitarbeitende> getMitarbeitende()  {
         var url = "jdbc:sqlite:C:/LVs/DBP2025/UrlaubsverwaltungJDBC2025.db";
         ArrayList<Mitarbeitende> mitarbeitendeList = new ArrayList<>();
 
@@ -153,10 +192,11 @@ SELECT * FROM Urlaube;
             System.out.println("🛜 Connection to SQLite has been established.");
 
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende");
+            ResultSet rs = stmt.executeQuery("SELECT  MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende");
 
             while (rs.next()) {
                 int id = rs.getInt("MAId");
+
                 String vorname = rs.getString("Vorname");
                 String nachname = rs.getString("Nachname");
                 String email = rs.getString("Email");
@@ -165,6 +205,8 @@ SELECT * FROM Urlaube;
                 Mitarbeitende mitarbeiter = new Mitarbeitende(id, vorname, nachname, email, eintrittsdatum);
                 mitarbeitendeList.add(mitarbeiter);
             }
+            stmt.close();
+            rs.close();
         } catch (SQLException e) {
             System.out.println("Fehler bei der Datenbankoperation: " + e.getMessage());
 

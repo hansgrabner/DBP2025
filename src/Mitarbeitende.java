@@ -4,7 +4,11 @@ public class Mitarbeitende {
     public String nachname;
     public String email;
     public String eintrittsdatum;
+    public int urlaubstage;
 
+    public Mitarbeitende(){
+
+    }
     public Mitarbeitende(int id, String vorname, String nachname, String email, String eintrittsdatum) {
         this.id = id;
         this.vorname = vorname;
