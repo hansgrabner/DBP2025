@@ -6,7 +6,8 @@ import java.sql.Statement;
 
 public class Main {
     public static void main(String[] args) {
-        connectAndDisplayMitarbeitende();
+        //connectAndDisplayMitarbeitende();
+        connectAndDisplayMitarbeiterUrlaub(1);
         System.out.println("Hello, World!");
     }
 
@@ -96,9 +97,43 @@ SELECT * FROM Urlaube;
                         rs.getString(4),
                         rs.getString(5)
                 );
+            rs.close();
+            stmt.close();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
+    public static void connectAndDisplayMitarbeiterUrlaub(int mitarbeiterId) {
+        // connection string
+        var url = "jdbc:sqlite:C:/LVs/DBP2025/UrlaubsverwaltungJDBC2025.db";
+        try (var conn = DriverManager.getConnection(url)) {
+            System.out.println("Connection to SQLite has been established.");
+            Statement stmt = conn.createStatement();
+            StringBuilder selectStringUrlaube =new StringBuilder("SELECT m.MAId, m.Vorname, ua.Code, ua.Bezeichnung, u.Startdatum, u.Enddatum, u.Kommentar\n" +
+                    "FROM  Urlaube AS u JOIN Mitarbeitende AS m\n" +
+                    "ON u.MitarbeiterId = m.MAId\n" +
+                    " JOIN Urlaubsarten AS ua\n" +
+                    "ON ua.UrlaubsartId = u.UrlaubsartId");
+
+            selectStringUrlaube.append(" WHERE MAId=" + mitarbeiterId);
+            ResultSet rs = stmt.executeQuery( selectStringUrlaube.toString());
+            while ( rs.next() )
+                System.out.printf( "%d, Vorname: %s, Code: %s Bezeichnung: %s Start: %s Ende: %s %n",
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6)
+                );
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 }
