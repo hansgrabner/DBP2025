@@ -85,7 +85,6 @@ SELECT * FROM Urlaube;
         // connection string
         var url = "jdbc:sqlite:C:/LVs/DBP2025/UrlaubsverwaltungJDBC2025.db";
         try (var conn = DriverManager.getConnection(url)) {
-
             System.out.println("Connection to SQLite has been established.");
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery( "select MAId, Vorname, Nachname, Email, Eintrittsdatum from Mitarbeitende" );
@@ -97,7 +96,6 @@ SELECT * FROM Urlaube;
                         rs.getString(4),
                         rs.getString(5)
                 );
-
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
