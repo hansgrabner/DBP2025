@@ -52,7 +52,7 @@ public class Main {
 /*
     1 Insert neue Urlaubsart ----> Adventures --- > neue ID ist 3(Generated Keys)
     2. Insert eines Urlaubs mit der neuen Urlaubsart (MAId: 1, UrlaubsID: 3, 01.02.2025 04.05.2025
-    3.
+    3.Delete Urlaubsart VORSICHT ForeignKey-Constraint berücksichtigen
 
 
  */
