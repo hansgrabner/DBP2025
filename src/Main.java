@@ -73,6 +73,14 @@ public class Main {
         /*Aufgabe 21.8.2025
         Bitte zuerst eineige BeispielDatensätze einfügen
         1. Aufgabe - Mitarbeiter mit den meisten Urlaubstagen insgesamt --> Johann 12 (ohne ZA)
+        -- TOP N  SUM(Tage) GROUP BY MaID ORDER BY SUM(TAGE)
+        select m.maId, m.Vorname, SUM(MaID) AS SummeTageInsgesamtFakeNew, u.Startdatum from
+          Mitarbeitende m JOIN Urlaube u
+            ON m.MaId = u.MitarbeiterID
+            GROUP BY m.maid
+            ORDER BY SUM(MaID) DESC
+            LIMIT 1;
+            select cast(substring(startdatum,7,8) as text)  + cast('-' as text) + cast(substring(startdatum,4,2) as text) , startdatum from urlaube
         2. Aufgabe Verbrauchte Urlaubstage pro Kategorie
             Za Zeitausgleich    30
             AV Adventures       7
