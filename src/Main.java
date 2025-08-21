@@ -49,7 +49,13 @@ public class Main {
         System.out.println("Neue ID vom DB vergeben: " + maNeu.id);
         //Insert mit auto-ID + Rückgabe der ID
 
+/*
+    1 Insert neue Urlaubsart ----> Adventures --- > neue ID ist 3(Generated Keys)
+    2. Insert eines Urlaubs mit der neuen Urlaubsart (MAId: 1, UrlaubsID: 3, 01.02.2025 04.05.2025
+    3.
 
+
+ */
 
 
 
