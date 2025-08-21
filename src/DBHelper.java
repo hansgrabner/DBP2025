@@ -9,6 +9,8 @@ public class DBHelper {
         var url = "jdbc:sqlite:C:/LVs/DBP2025/UrlaubsverwaltungJDBC2025.db";
         try {
             conn = DriverManager.getConnection(url);
+
+            conn.createStatement().execute("PRAGMA foreign_keys = ON");
             System.out.println("Verbindung zur SQLite DB hergestellt.");
         } catch (SQLException e) {
             System.out.println("Fehler beim Verbinden: " + e.getMessage());
@@ -194,6 +196,71 @@ public class DBHelper {
         }
 
         return newId;
+    }
+
+
+    public int insertNewUrlaubsArt(String code, String bezeichnung) throws SQLException {
+        int urlaubsartId = -99;
+
+        String sql = "INSERT INTO Urlaubsarten (Code, Bezeichnung) VALUES (?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, code);
+            ps.setString(2, bezeichnung);
+            int rowsAffect = ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    urlaubsartId = rs.getInt(1);
+                }
+            }
+        }
+
+        return urlaubsartId;
+    }
+
+    public void addUrlaub(int MAId, int UId, String start, String end) {
+
+        // language=SQLite
+        String sql = "INSERT INTO Urlaube (MitarbeiterId, UrlaubsartId, Startdatum, Enddatum)  VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, MAId);
+            ps.setInt(2, UId);
+            ps.setString(3, start);
+            ps.setString(4, end);
+
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+                System.out.println("New Urlaub was added");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    // 🆕 3. Urlaubsart löschen
+//    Übergabe: ID der Urlaubsart
+//    Rückgabe: Anzahl der gelöschten Zeilen (0 = nichts gelöscht)
+//    ⚠️ Achtung: Löschen geht nur, wenn KEIN Urlaub mehr mit dieser Urlaubsart existiert
+    public int deleteUrlaubsart(int urlaubsartId) {
+        int rowsAffected = 0;
+        String sql = "DELETE FROM Urlaubsarten WHERE UrlaubsartId = ?";
+
+        try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
+            pStmt.setInt(1, urlaubsartId);
+            rowsAffected = pStmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Urlaubsart mit ID " + urlaubsartId + " gelöscht.");
+            } else {
+                System.out.println("Keine Urlaubsart gelöscht (evtl. noch mit Urlaube verknüpft).");
+            }
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Löschen der Urlaubsart: " + e.getMessage());
+        }
+
+        return rowsAffected;
     }
 
 }

@@ -44,10 +44,13 @@ public class Main {
 //AUFGABENSTELLUNG BEGINN: nur PreparedStatements verwenden
 
         // Neuen Mitarbeitenden hinzufügen
+        /*
         Mitarbeitende maNeu = new Mitarbeitende(-1, "Josef", "Huber", "j.hubeabcr@mail.at", "2025-08-20");
         myHelper.insertNewMitarbeitender(maNeu);
         System.out.println("Neue ID vom DB vergeben: " + maNeu.id);
         //Insert mit auto-ID + Rückgabe der ID
+        */
+
 
 /*
     1 Insert neue Urlaubsart ----> Adventures --- > neue ID ist 3(Generated Keys)
@@ -56,6 +59,17 @@ public class Main {
 
 
  */
+
+        try
+        {
+            int urlaubsArtId= myHelper.insertNewUrlaubsArt("av3","Adventures3");
+            myHelper.addUrlaub(1,urlaubsArtId,"01.09.2025","10.09.2025");
+            myHelper.deleteUrlaubsart(urlaubsArtId);
+
+        }
+        catch (SQLException ex){
+
+        }
 
 
 
