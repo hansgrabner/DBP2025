@@ -57,7 +57,6 @@ public class Main {
     2. Insert eines Urlaubs mit der neuen Urlaubsart (MAId: 1, UrlaubsID: 3, 01.02.2025 04.05.2025
     3.Delete Urlaubsart VORSICHT ForeignKey-Constraint berücksichtigen
 
-
  */
 
         try
@@ -70,6 +69,22 @@ public class Main {
         catch (SQLException ex){
 
         }
+
+        /*Aufgabe 21.8.2025
+        Bitte zuerst eineige BeispielDatensätze einfügen
+        1. Aufgabe - Mitarbeiter mit den meisten Urlaubstagen insgesamt --> Johann 12 (ohne ZA)
+        2. Aufgabe Verbrauchte Urlaubstage pro Kategorie
+            Za Zeitausgleich    30
+            AV Adventures       7
+            U Urlaub            20
+        3. Verbrauchte Urlaubstage pro Quartal für alle Mitarbeiter
+        2025 Q1 - 10 Tage
+        2025 Q2 - 15 Tage
+        2025 Q3 - 37 Tage
+
+
+         */
+
 
 
 
