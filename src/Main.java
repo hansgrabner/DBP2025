@@ -90,7 +90,6 @@ public class Main {
         2025 Q2 - 15 Tage
         2025 Q3 - 37 Tage
 
-
          */
 
 
