@@ -31,7 +31,12 @@ public class DBHelper {
     public ArrayList<Mitarbeitende> getMitarbeitende() {
         ArrayList<Mitarbeitende> mitarbeitendeList = new ArrayList<>();
 
+        String searchVorname="Donna";
         String sql = "SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende";
+        sql = "SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende";
+       // schlecht lesbar wartbar sql += " WHERE Vorname='" + searchVorname + "' and email like '%jkljsdf%'";
+        //besser einfacher sicherer schneller sql += " WHERE Vorname=? and email LIKE ?";
+
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -120,6 +125,79 @@ public class DBHelper {
             System.out.println("Fehler bei Urlaubsauswertung: " + e.getMessage());
         }
     }
+
+    // 🆕 Einen Mitarbeitenden löschen (Aufgabenstellung)
+    // Übergabe: ID eines Mitarbeitenden
+    // Rückgabe: Anzahl der gelöschten Zeilen (0 = keiner gefunden, 1 = gelöscht)
+    public int deleteMitarbeitender(int maId) {
+        int rowsAffected = 0;
+        String sql = "DELETE FROM Mitarbeitende WHERE MAId=?";
+       // String eingabe=" 17 OR 1=1; DELETE FROM Kunden";
+        //String boeserString="Select * from kunden where id = " + eingabe;
+
+        try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
+            // ID wird an das SQL übergeben (statt direkt im String → Schutz vor SQL-Injection)
+            pStmt.setInt(1, maId);
+
+            // Ausführung des DELETE-Befehls
+            rowsAffected = pStmt.executeUpdate();
+
+            /*
+            if (rowsAffected==0){
+                System.out.println("Mitarbeitender mit der ID " + maId + " wurde nicht gefunden.");
+            }else {
+                System.out.println("Mitarbeitender mit ID " + maId + " gelöscht.");
+            }*/
+
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Löschen: " + e.getMessage());
+        }
+
+        return rowsAffected;
+    }
+
+
+    // 🆕 Einen neuen Mitarbeitenden einfügen (Aufgabenstellung)
+    // Übergabe: Objekt vom Typ Mitarbeitende (id = -1, weil DB sie selbst vergibt)
+    // Rückgabe: Die von der DB vergebene ID
+    public int insertNewMitarbeitender(Mitarbeitende neuerMitarbeiter) {
+        int newId = -1;
+
+        // SQL-Statement: ID NICHT setzen → DB generiert automatisch eine neue
+        String sql = "INSERT INTO Mitarbeitende (Vorname, Nachname, Email, Eintrittsdatum) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pStmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            // Werte aus dem übergebenen Objekt einsetzen
+            pStmt.setString(1, neuerMitarbeiter.vorname);
+            pStmt.setString(2, neuerMitarbeiter.nachname);
+            pStmt.setString(3, neuerMitarbeiter.email);
+            pStmt.setString(4, neuerMitarbeiter.eintrittsdatum);
+
+            // Ausführung des INSERT-Befehls
+            int rows = pStmt.executeUpdate();
+
+            if (rows > 0) {
+                // Abfragen der automatisch vergebenen ID
+                try (ResultSet generatedKeys = pStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        newId = generatedKeys.getInt(1);
+                        // ID auch im Objekt speichern → bleibt im Programm verfügbar
+                        neuerMitarbeiter.id = newId;
+                    }
+                }
+            }
+
+            System.out.println("Neuer Mitarbeitender eingefügt mit ID = " + newId);
+
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Einfügen: " + e.getMessage());
+        }
+
+        return newId;
+    }
+
 }
+
+
 
  

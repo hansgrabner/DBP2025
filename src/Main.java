@@ -14,17 +14,46 @@ public class Main {
         DBHelper myHelper =new DBHelper();
         myHelper.connectToDatabase();
         //get einen Mitarbeitenden
-        Mitarbeitende mNr1 = myHelper.getMitarbeitenden(4);
+
+        /*
+        Mitarbeitende mNr1 = myHelper.getMitarbeitenden(1);
         System.out.println(mNr1);
         mNr1.vorname="Karl";
         System.out.println(myHelper.updateMitarbeitenden(mNr1));
+*/
+        // Mitarbeitenden wieder löschen
+        /*
+        int maId=7;
+        int rowsAffected = myHelper.deleteMitarbeitender(maId);
+        if (rowsAffected==0){
+            System.out.println("Mitarbeitender mit der ID " + maId + " wurde nicht gefunden.");
+        }else {
+            System.out.println("Mitarbeitender mit ID " + maId + " gelöscht.");
+        }
+        */
+
+        //Delete mit Übergabe der ID
 
         //Aufgabe für Nachmittag
         //myHelpder.deleteMitarbeitender(1)
+        //Mitarbeitender maNeu =new Mitarbeitender(-99,'Josef','Huber','','')
+        //INSERT INTO Mitarbeitende(Vorname,Nachname,email) VALUES
         //myHelper.insertNewMitarbeitender(maNeu);
         //Der neue Mitarbeitende bekam die Id 37 ???
 
+//AUFGABENSTELLUNG BEGINN: nur PreparedStatements verwenden
 
+        // Neuen Mitarbeitenden hinzufügen
+        Mitarbeitende maNeu = new Mitarbeitende(-1, "Josef", "Huber", "j.hubeabcr@mail.at", "2025-08-20");
+        myHelper.insertNewMitarbeitender(maNeu);
+        System.out.println("Neue ID vom DB vergeben: " + maNeu.id);
+        //Insert mit auto-ID + Rückgabe der ID
+
+
+
+
+
+//AUFGABENSTELLUNG ENDE
 
         /*
         ArrayList<Mitarbeitende> alleMitarbeitende = myHelper.getMitarbeitende();
