@@ -1,6 +1,6 @@
 public class Urlaubsart {
 
-    public int UrlaubsartId,
+    public int UrlaubsartId;
     public String Code;
 
     public String getBezeichnung() {
