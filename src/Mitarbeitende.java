@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Mitarbeitende {
     public int id;
     public String vorname;
@@ -5,6 +7,9 @@ public class Mitarbeitende {
     public String email;
     public String eintrittsdatum;
     public int urlaubstage;
+    public int urlaubsTageZA;
+    public int urlaubsTageSiedeln;
+    public ArrayList<Urlaub> MeineUrlaube;
 
     public Mitarbeitende(){
 

@@ -48,6 +48,11 @@ public class DBHelper {
                 String nachname = rs.getString("Nachname");
                 String email = rs.getString("Email");
                 String eintrittsdatum = rs.getString("Eintrittsdatum");
+                String kommentar = rs.getString("Kommentar");
+                //kommentar =""
+                if (rs.wasNull()==true){
+                    kommentar = "wurde nicht vergeben, ist NULL";
+                }
 
                 Mitarbeitende m = new Mitarbeitende(id, vorname, nachname, email, eintrittsdatum);
                 mitarbeitendeList.add(m);
@@ -168,6 +173,7 @@ public class DBHelper {
         // SQL-Statement: ID NICHT setzen → DB generiert automatisch eine neue
         String sql = "INSERT INTO Mitarbeitende (Vorname, Nachname, Email, Eintrittsdatum) VALUES (?, ?, ?, ?)";
 
+        // SELECT last_insert_rowid();
         try (PreparedStatement pStmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             // Werte aus dem übergebenen Objekt einsetzen
             pStmt.setString(1, neuerMitarbeiter.vorname);
