@@ -72,7 +72,16 @@ public class Main {
         }
         */
       myHelper.printMitarbeiterMitMaxUrlaubOhneZaArt();
+
       //myHelper.closeDatabaseConnection();
+
+        ArrayList<Mitarbeitende> mi = myHelper.getAlleMitarbeitendeInklUrlaube();
+        //ma.ZaTage = 17
+        //ma.UrlaubsTage=29;
+        //ma.AVTAge = 12;
+        //ma.AlleUrlaube --> ArrayList<Urlaube>
+        //zuerst AlLE ma einlesen SELECT MaID from Mitarbeitende
+        //getMitarbeitender(id)
 
         /*Aufgabe 21.8.2025
         Bitte zuerst eineige BeispielDatensätze einfügen
