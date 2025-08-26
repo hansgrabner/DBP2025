@@ -108,7 +108,8 @@ public class Main {
          */
 
         //myHelper.printUrlaubProKategorie();
-        myHelper.printUrlaubProQuartal();
+        //myHelper.printUrlaubProQuartal();
+        myHelper.uebertrageBonsupunkteTransaction(1,2,20);
 
 
 

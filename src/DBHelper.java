@@ -499,6 +499,60 @@ public class DBHelper {
     }
 
 
+    public void uebertrageBonsupunkteTransaction(int mitIdVon, int mitIdZu, int bonuspunkte) {
+        int rowsAffected = 0;
+        try {
+            conn.setAutoCommit(false);
+        }
+        catch(SQLException ex){
+
+        }
+
+
+        String updateAbbuchenSql = "UPDATE Mitarbeitende\n" +
+                "SET MitarbeiterBonuspunkte = MitarbeiterBonuspunkte - ?" +
+                "WHERE MAId = ?;";
+        int abbuchErfolgreich = 0;
+        int gutBuchenErfolgreich = 0;
+        try (PreparedStatement pStmt = conn.prepareStatement(updateAbbuchenSql)) {
+            pStmt.setInt(1,bonuspunkte);
+            pStmt.setInt(2,mitIdVon);
+            abbuchErfolgreich = pStmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Ändern eines Mitarbeitendn: " + e.getMessage());
+        }
+
+        String updateGutbuchenSql = "UPDATE Mitarbeitende\n" +
+                "SET MitarbeiterBonuspunkte = MitarbeiterBonuspunkte + ?" +
+                "WHERE MAId = ?;";
+
+        try (PreparedStatement pStmt = conn.prepareStatement(updateAbbuchenSql)) {
+            pStmt.setInt(1,bonuspunkte);
+            pStmt.setInt(2,mitIdZu);
+            gutBuchenErfolgreich = pStmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Ändern eines Mitarbeitendn: " + e.getMessage());
+        }
+
+        try
+        {
+        if (abbuchErfolgreich==1 && gutBuchenErfolgreich==1){
+            conn.commit();
+        } else {
+            conn.rollback();
+        }
+                } catch (SQLException e) {
+                    System.out.println("Fehler beim Ändern eines Mitarbeitendn: " + e.getMessage());
+                }
+        try {
+            conn.setAutoCommit(true);
+        }
+        catch(SQLException ex){
+
+        }
+
+    }
+
 }
 
 
