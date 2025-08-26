@@ -437,6 +437,68 @@ public class DBHelper {
 
         return urlaube;
     }
+
+    public void printUrlaubProKategorie() {
+
+        // language=SQLite
+        String query = "SELECT ua.UrlaubsartId, ua.Code, SUM(julianday(u.Enddatum) - julianday(u.Startdatum) + 1) AS Tage " +
+                "FROM Urlaubsarten as ua " +
+                "JOIN Urlaube as u on ua.UrlaubsartId= u.UrlaubsartId " +
+                "GROUP BY ua.Code " +
+                "   ORDER BY SUM(julianday(u.Enddatum) - julianday(u.Startdatum) + 1) DESC";
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int UaId = rs.getInt(1);
+                String code = rs.getString(2);
+                int tage = rs.getInt(3);
+
+                System.out.println(code + " - " + tage);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void printUrlaubProQuartal() {
+        String[] quartale = {
+                "SELECT 'Q1' AS Quartal, SUM(julianday(Enddatum) - julianday(Startdatum) + 1) AS Tage " +
+                        "FROM Urlaube u JOIN Urlaubsarten ua ON ua.UrlaubsartId = u.UrlaubsartId " +
+                        "WHERE Startdatum >= '2025-01-01' AND Enddatum <= '2025-03-31'",
+
+                "SELECT 'Q2' AS Quartal, SUM(julianday(Enddatum) - julianday(Startdatum) + 1) AS Tage " +
+                        "FROM Urlaube u JOIN Urlaubsarten ua ON ua.UrlaubsartId = u.UrlaubsartId " +
+                        "WHERE Startdatum >= '2025-04-01' AND Enddatum <= '2025-06-30'",
+
+                "SELECT 'Q3' AS Quartal, SUM(julianday(Enddatum) - julianday(Startdatum) + 1) AS Tage " +
+                        "FROM Urlaube u JOIN Urlaubsarten ua ON ua.UrlaubsartId = u.UrlaubsartId " +
+                        "WHERE Startdatum >= '2025-07-01' AND Enddatum <= '2025-09-30'",
+
+                "SELECT 'Q4' AS Quartal, SUM(julianday(Enddatum) - julianday(Startdatum) + 1) AS Tage " +
+                        "FROM Urlaube u JOIN Urlaubsarten ua ON ua.UrlaubsartId = u.UrlaubsartId " +
+                        "WHERE Startdatum >= '2025-10-01' AND Enddatum <= '2025-12-31'"
+        };
+
+        try (Statement stmt = conn.createStatement()) {
+            for (String sql : quartale) {
+                try (ResultSet rs = stmt.executeQuery(sql)) {
+                    if (rs.next()) {
+                        String quartal = rs.getString("Quartal");
+                        int tage = rs.getInt("Tage");
+                        System.out.println("2025 " + quartal + " - " + tage + " Tage");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Error: " + e.getMessage());
+        }
+    }
+
+
 }
 
 

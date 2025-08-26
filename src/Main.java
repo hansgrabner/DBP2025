@@ -76,7 +76,7 @@ public class Main {
       //myHelper.closeDatabaseConnection();
 
 
-        Mitarbeitende mi = myHelper.getMitarbeitendenMitUrlauben(1);
+     //   Mitarbeitende mi = myHelper.getMitarbeitendenMitUrlauben(1);
         //ArrayList<Mitarbeitende> mi = myHelper.getMitarbeitendenMitUrlauben();
         //ma.ZaTage = 17
         //ma.UrlaubsTage=29;
@@ -106,6 +106,9 @@ public class Main {
         2025 Q3 - 37 Tage
 
          */
+
+        //myHelper.printUrlaubProKategorie();
+        myHelper.printUrlaubProQuartal();
 
 
 
