@@ -59,6 +59,7 @@ public class Main {
 
  */
 
+        /*
         try
         {
             int urlaubsArtId= myHelper.insertNewUrlaubsArt("av3","Adventures3");
@@ -69,6 +70,9 @@ public class Main {
         catch (SQLException ex){
 
         }
+        */
+      myHelper.printMitarbeiterMitMaxUrlaubOhneZaArt();
+      //myHelper.closeDatabaseConnection();
 
         /*Aufgabe 21.8.2025
         Bitte zuerst eineige BeispielDatensätze einfügen

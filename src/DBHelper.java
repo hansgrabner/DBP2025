@@ -1,5 +1,9 @@
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DBHelper {
     private Connection conn;
@@ -33,10 +37,10 @@ public class DBHelper {
     public ArrayList<Mitarbeitende> getMitarbeitende() {
         ArrayList<Mitarbeitende> mitarbeitendeList = new ArrayList<>();
 
-        String searchVorname="Donna";
+        String searchVorname = "Donna";
         String sql = "SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende";
         sql = "SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende";
-       // schlecht lesbar wartbar sql += " WHERE Vorname='" + searchVorname + "' and email like '%jkljsdf%'";
+        // schlecht lesbar wartbar sql += " WHERE Vorname='" + searchVorname + "' and email like '%jkljsdf%'";
         //besser einfacher sicherer schneller sql += " WHERE Vorname=? and email LIKE ?";
 
         try (Statement stmt = conn.createStatement();
@@ -50,7 +54,7 @@ public class DBHelper {
                 String eintrittsdatum = rs.getString("Eintrittsdatum");
                 String kommentar = rs.getString("Kommentar");
                 //kommentar =""
-                if (rs.wasNull()==true){
+                if (rs.wasNull() == true) {
                     kommentar = "wurde nicht vergeben, ist NULL";
                 }
 
@@ -70,10 +74,9 @@ public class DBHelper {
         Mitarbeitende mitarbeitender = new Mitarbeitende();
 
         String sql = "SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende Where MAId=?";
-        try (PreparedStatement pStmt = conn.prepareStatement(sql))
-        {
-            pStmt.setInt(1,maId);
-             ResultSet rs = pStmt.executeQuery();
+        try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
+            pStmt.setInt(1, maId);
+            ResultSet rs = pStmt.executeQuery();
 
             if (rs.next()) {
                 int id = rs.getInt("MAId");
@@ -94,18 +97,17 @@ public class DBHelper {
     }
 
     public int updateMitarbeitenden(Mitarbeitende geaenderterMitarbeiter) {
-        int rowsAffected=0;
+        int rowsAffected = 0;
 
         String updateSql = "Update Mitarbeitende SET Vorname=?, Nachname=?, Email=?, Eintrittsdatum=?  Where MAId=?";
-        try (PreparedStatement pStmt = conn.prepareStatement(updateSql))
-        {
-            pStmt.setString(1,geaenderterMitarbeiter.vorname);
-            pStmt.setString(2,geaenderterMitarbeiter.nachname);
-            pStmt.setString(3,geaenderterMitarbeiter.email);
-            pStmt.setString(4,geaenderterMitarbeiter.eintrittsdatum);
-            pStmt.setInt(5,geaenderterMitarbeiter.id);
+        try (PreparedStatement pStmt = conn.prepareStatement(updateSql)) {
+            pStmt.setString(1, geaenderterMitarbeiter.vorname);
+            pStmt.setString(2, geaenderterMitarbeiter.nachname);
+            pStmt.setString(3, geaenderterMitarbeiter.email);
+            pStmt.setString(4, geaenderterMitarbeiter.eintrittsdatum);
+            pStmt.setInt(5, geaenderterMitarbeiter.id);
 
-            rowsAffected=pStmt.executeUpdate();
+            rowsAffected = pStmt.executeUpdate();
 
 
         } catch (SQLException e) {
@@ -139,7 +141,7 @@ public class DBHelper {
     public int deleteMitarbeitender(int maId) {
         int rowsAffected = 0;
         String sql = "DELETE FROM Mitarbeitende WHERE MAId=?";
-       // String eingabe=" 17 OR 1=1; DELETE FROM Kunden";
+        // String eingabe=" 17 OR 1=1; DELETE FROM Kunden";
         //String boeserString="Select * from kunden where id = " + eingabe;
 
         try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
@@ -269,7 +271,68 @@ public class DBHelper {
         return rowsAffected;
     }
 
+    public void printMitarbeiterMitMaxUrlaubOhneZaArt() {
+        Map<Integer, Integer> sumById = new HashMap<>();
+        Map<Integer, String> nameById = new HashMap<>();
+        // language=SQLite
+        String query = "SELECT m.MAId, m.Vorname, m.Nachname, u.Startdatum, u.Enddatum, ua.Code " +
+                "FROM  Urlaube AS u JOIN Mitarbeitende AS m " +
+                "ON u.MitarbeiterId = m.MAId " +
+                "LEFT JOIN Urlaubsarten ua ON u.UrlaubsartId = ua.UrlaubsartId" +
+                " WHERE Code!='ZA'";
+
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int MAId = rs.getInt(1);
+                String vorname = rs.getString(2);
+                String nachname = rs.getString(3);
+                String start = rs.getString(4);
+                String end = rs.getString(5);
+                String code = rs.getString(6);
+
+                if (code.equalsIgnoreCase("za")) {
+                    continue;
+                }
+                LocalDate startDate = LocalDate.parse(start);
+                LocalDate endDate = LocalDate.parse(end);
+
+                int tage = (int) ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+                int sum = sumById.getOrDefault(MAId, 0);
+                sumById.put(MAId, sum + tage);
+
+                nameById.putIfAbsent(MAId, vorname + " " + nachname);
+
+            }
+
+            int maxDays = 0;
+            for (Map.Entry<Integer, Integer> entry : sumById.entrySet()) {
+                int days = entry.getValue();
+                if (days > maxDays) {
+                    maxDays = days;
+                }
+            }
+
+            for (Map.Entry<Integer, Integer> entry : sumById.entrySet()) {
+                if (maxDays == entry.getValue()) {
+                    String name = nameById.get(entry.getKey());
+                    System.out.println("Meisten Urlaubstage (" + maxDays + " Tage) (ohne ZA Urlaubsart) hat " + name);
+                }
+            }
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+        }
+    }
 }
+
+
 
 
 
