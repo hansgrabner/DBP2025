@@ -330,6 +330,113 @@ public class DBHelper {
 
         }
     }
+
+    //select * from mitarbeitenden
+
+    public Mitarbeitende getMitarbeitendenMitUrlauben(int maId) {
+        Mitarbeitende mitarbeitender = new Mitarbeitende();
+
+        String sql = "SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende Where MAId=?";
+        //1. Schritt Mitarbeitenden laden
+        try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
+            pStmt.setInt(1, maId);
+            ResultSet rs = pStmt.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("MAId");
+                String vorname = rs.getString("Vorname");
+                String nachname = rs.getString("Nachname");
+                String email = rs.getString("Email");
+                String eintrittsdatum = rs.getString("Eintrittsdatum");
+                mitarbeitender = new Mitarbeitende(id, vorname, nachname, email, eintrittsdatum);
+                mitarbeitender.setUrlaubstageAV(getSummeUrlaubeProKategorie(id,"AV"));
+                mitarbeitender.setUrlaubstageU(getSummeUrlaubeProKategorie(id,"U"));
+                mitarbeitender.setUrlaubstageZA(getSummeUrlaubeProKategorie(id,"ZA"));
+                mitarbeitender.setMeineUrlaube(getMitarbeitendeUrlaub(mitarbeitender));
+
+
+            } else {
+                mitarbeitender = new Mitarbeitende(-1, "nicht vorhanden", "", "", "");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Abrufen der Mitarbeitenden: " + e.getMessage());
+        }
+
+        return mitarbeitender;
+    }
+
+    public int getSummeUrlaubeProKategorie(int mitId, String code) {
+        String selectUrlaub = "SELECT u.MitarbeiterId, ua.Code, ua.Bezeichnung, u.Startdatum, u.Enddatum, u.Kommentar " +
+                "FROM  Urlaube AS u JOIN Urlaubsarten AS ua " +
+                "ON ua.UrlaubsartId = u.UrlaubsartId " +
+                "WHERE ua.Code =? AND u.MitarbeiterId = ?";
+        int urlaubsTageGesamt = 0;
+
+        try (PreparedStatement pStmt = conn.prepareStatement(selectUrlaub)) {
+            pStmt.setString(1, code);
+            pStmt.setInt(2, mitId);
+            ResultSet rs = pStmt.executeQuery();
+            while (rs.next()) {
+                String startDatum = rs.getString("Startdatum");
+                String enddatum = rs.getString("Enddatum");
+                urlaubsTageGesamt += getTageBetween(startDatum,enddatum);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Abrufen der Mitarbeitenden: " + e.getMessage());
+        }
+
+        return  urlaubsTageGesamt;
+    }
+
+        private int getTageBetween(String startDatum, String endDatum){
+            LocalDate startDate = LocalDate.parse(startDatum);
+            LocalDate endDate = LocalDate.parse(endDatum);
+            int tage = (int) ChronoUnit.DAYS.between(startDate, endDate) + 1;
+            return  tage;
+        }
+
+
+    public ArrayList<Urlaub> getMitarbeitendeUrlaub(Mitarbeitende ma) {
+        ArrayList<Urlaub> urlaube = new ArrayList<>();
+
+        String searchVorname = "Donna";
+        String sql = "SELECT MAId, Vorname, Nachname, Email, Eintrittsdatum FROM Mitarbeitende";
+        sql = "SELECT urlaubid, MitarbeiterId, ua.UrlaubsArtId, ua.Code, ua.Bezeichnung, u.Startdatum, u.Enddatum, u.Kommentar " +
+                " FROM Urlaube AS u JOIN Urlaubsarten AS ua ON ua.UrlaubsartId = u.UrlaubsartId " +
+                " WHERE MitarbeiterId=?";
+
+        try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
+            pStmt.setInt(1, ma.getId());
+            ResultSet rs = pStmt.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("MitarbeiterId");
+                int urlaubId = rs.getInt("urlaubid");
+                String startDatum = rs.getString("startDatum");
+                String endDatum = rs.getString("Enddatum");
+                String code = rs.getString("Code");
+                String bezeichnung = rs.getString("Bezeichnung");
+                int uaAd = rs.getInt("UrlaubsartId");
+                Urlaub u =new Urlaub();
+                u.setStartdatum(startDatum);
+                u.setEnddatum(endDatum);
+                u.setUrlaubId(urlaubId);
+                Urlaubsart ua =new Urlaubsart(uaAd,code,bezeichnung);
+
+                u.setUrlaubsart(ua);
+                u.setMitarbeiter(ma);
+
+                urlaube.add(u);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Abrufen der Mitarbeitenden: " + e.getMessage());
+        }
+
+        return urlaube;
+    }
 }
 
 

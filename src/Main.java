@@ -71,11 +71,13 @@ public class Main {
 
         }
         */
-      myHelper.printMitarbeiterMitMaxUrlaubOhneZaArt();
+      //myHelper.printMitarbeiterMitMaxUrlaubOhneZaArt();
 
       //myHelper.closeDatabaseConnection();
 
-        ArrayList<Mitarbeitende> mi = myHelper.getAlleMitarbeitendeInklUrlaube();
+
+        Mitarbeitende mi = myHelper.getMitarbeitendenMitUrlauben(1);
+        //ArrayList<Mitarbeitende> mi = myHelper.getMitarbeitendenMitUrlauben();
         //ma.ZaTage = 17
         //ma.UrlaubsTage=29;
         //ma.AVTAge = 12;
